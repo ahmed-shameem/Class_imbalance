@@ -23,7 +23,8 @@ c2 = 2
 WMAX = 0.9
 WMIN = 0.4
 
-df = pd.read_csv('cancer_classification.csv')
+dataset = "cancer_classification.csv"
+df = pd.read_csv(dataset)
 a,b = np.shape(df)
 # print(a,b)
 data = df.values[:,0:b-1]
@@ -40,6 +41,8 @@ clf.fit(trainX,trainy)
 val=clf.score(testX,testy)
 print("Acc: ", val)
 
+with open("results.csv","a") as f:
+    print(dataset, "KNN", val, sep=',', file=f)
 
 trainX_i, testX_i, trainy_i, testy_i = train_test_split(trainX, trainy,stratify=trainy ,test_size=test_size,random_state=(7+17*int(time.time()%1000)))
 
@@ -243,6 +246,8 @@ def PSO():
     model=clf.fit(train_data,train_y)
     val=model.score(testX,testy)
     print("Test_val: ",val)
+    with open("results.csv","a") as f:
+        print(dataset, "PSO", val, sep=',', file=f)
     
     
     
