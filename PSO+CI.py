@@ -43,26 +43,37 @@ print("Acc: ", val)
 
 trainX_i, testX_i, trainy_i, testy_i = train_test_split(trainX, trainy,stratify=trainy ,test_size=test_size,random_state=(7+17*int(time.time()%1000)))
 
-def initialise(dimension):
-    population=np.zeros((popSize,dimension))
-    minn = 1
-    maxx = math.floor(0.5*dimension)
+# def initialise(dimension):
+#     population=np.zeros((popSize,dimension))
+#     minn = 1
+#     maxx = math.floor(0.5*dimension)
     
-    if maxx<minn:
-        maxx = minn + 1
-        #not(c[i].all())
+#     if maxx<minn:
+#         maxx = minn + 1
+#         #not(c[i].all())
     
+#     for i in range(popSize):
+#         random.seed(i**3 + 10 + time.time() ) 
+#         no = random.randint(minn,maxx)
+#         if no == 0:
+#             no = 1
+#         random.seed(time.time()+ 100)
+#         pos = random.sample(range(0,dimension-1),no)
+#         for j in pos:
+#             population[i][j]=1
+            
+#     return population
+
+def initialise(dimension, select):
+    population = np.zeros((popSize, dimension))
+    random.seed(time.time() + 1000)
+    pos = random.sample(range(0,dimension-1), select)
     for i in range(popSize):
-        random.seed(i**3 + 10 + time.time() ) 
-        no = random.randint(minn,maxx)
-        if no == 0:
-            no = 1
-        random.seed(time.time()+ 100)
-        pos = random.sample(range(0,dimension-1),no)
         for j in pos:
-            population[i][j]=1
+            population[i][j] = 1
             
     return population
+
 
 def fitness(agent, majority_index, minority_index, trainX, testX, trainy, testy):
     clf=KNeighborsClassifier(n_neighbors=5)
