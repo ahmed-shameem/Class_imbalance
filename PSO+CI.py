@@ -133,7 +133,7 @@ def PSO():
         
     
     
-    population = initialise(len(majority_index))
+    population = initialise(len(majority_index), len(minority_index))
     popfit = allfit(population, majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i)
     
     velocity=np.zeros((np.shape(population)[0],len(majority_index)))
