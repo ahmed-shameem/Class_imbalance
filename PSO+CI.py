@@ -217,6 +217,10 @@ def PSO():
     if (count_majority > len(minority_index)):
         for j in range(len(minority_index)):
             rows1.append(majority_index[j])
+            
+    else:
+        for j in range(majority_index):
+            rows1.append(majority_index[j])
 
     rows2 = minority_index.copy()
     
