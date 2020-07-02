@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[66]:
-
-
 import io
 import numpy as np
 import pandas as pd
@@ -23,8 +17,8 @@ c2 = 2
 WMAX = 0.9
 WMIN = 0.4
 
-dataset = "cancer_classification.csv"
-df = pd.read_csv(dataset)
+df = pd.read_csv('cancer_classification.csv')
+# df=pd.read_csv("liver-disorders_csv.csv")
 a,b = np.shape(df)
 # print(a,b)
 data = df.values[:,0:b-1]
@@ -41,8 +35,6 @@ clf.fit(trainX,trainy)
 val=clf.score(testX,testy)
 print("Acc: ", val)
 
-with open("results.csv","a") as f:
-    print(dataset, "KNN", val, sep=',', file=f)
 
 trainX_i, testX_i, trainy_i, testy_i = train_test_split(trainX, trainy,stratify=trainy ,test_size=test_size,random_state=(7+17*int(time.time()%1000)))
 
@@ -76,7 +68,6 @@ def initialise(dimension, select):
             population[i][j] = 1
             
     return population
-
 
 def fitness(agent, majority_index, minority_index, trainX, testX, trainy, testy):
     clf=KNeighborsClassifier(n_neighbors=5)
@@ -117,7 +108,7 @@ def PSO():
     index_0 = []
     index_1 = []
     for i in range(len(trainy_i)):
-        if(trainy_i[i] == 0):
+        if(trainy_i[i] == 1):
             count_0 += 1
             index_0.append(i)
         else:
@@ -174,15 +165,20 @@ def PSO():
           y=np.subtract(gbestVec,population[inx])
         
           velocity[inx]=np.multiply(W,velocity[inx])+np.multiply(r1,x)+np.multiply(r2,y)
-          population[inx] = np.add(population[inx],velocity[inx])
+#           population[inx] = np.add(population[inx],velocity[inx])
+          s = np.add(population[inx],velocity[inx])
         
-          for j in range(len(majority_index)):
-              if(random.random() < sigmoid(population[inx][j])):
-                  population[inx][j] = 1
+          for j in range(len(s)):
+              if(random.random() < sigmoid(s[j])):
+                  s[j] = 1
               else:
-                  population[inx][j] = 0
+                  s[j] = 0
                 
-          popfit[inx] = fitness(population[inx], majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i)
+          fits = fitness(s, majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i)
+          if(fits>popfit[inx]):
+                population[inx] = s.copy()
+                popfit[inx] = fits
+#           popfit[inx] = fitness(population[inx], majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i)
 
       
 #     fitsrt = np.argsort(popfit)
@@ -202,7 +198,7 @@ def PSO():
 
 #     model=clf.fit(train_data,train_y)
 #     val=model.score(testX,testy)
-# #     print("Test_val: ",val)
+#     print("Test_val: ",val)
 #     return val
     
     count_index = []
@@ -246,10 +242,7 @@ def PSO():
     model=clf.fit(train_data,train_y)
     val=model.score(testX,testy)
     print("Test_val: ",val)
-    with open("results.csv","a") as f:
-        print(dataset, "PSO", val, sep=',', file=f)
     
     
     
 PSO()
-
