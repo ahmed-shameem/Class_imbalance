@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[2]:
-
-
 import io
 import numpy as np
 import pandas as pd
@@ -24,7 +18,7 @@ WMAX = 0.9
 WMIN = 0.4
 Pm = 0.2
 
-df = pd.read_csv('cancer_classification.csv')
+df = pd.read_csv('yeast5.csv')
 # df=pd.read_csv("liver-disorders_csv.csv")
 a,b = np.shape(df)
 # print(a,b)
@@ -32,7 +26,7 @@ data = df.values[:,0:b-1]
 label = df.values[:,b-1]
 dimension = data.shape[1]
 
-for s in range(15):
+for s in range(1):
     cross = 5
     test_size = (1/cross)
     trainX, testX, trainy, testy = train_test_split(data, label,stratify=label ,test_size=test_size,random_state=(7+17*int(time.time()%1000)))
@@ -139,36 +133,46 @@ for s in range(15):
 
         population = initialise(len(majority_index), len(minority_index))
         popfit = allfit(population, majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i)
+        indx = np.argsort(popfit)
+        gbestVal = popfit[indx[-1]]
+        gbestVec = population[indx[-1]].copy()
         
-        for j in range(popSize):
-            random.seed(j**3 + 10 + time.time() )
-            one = random.randint(0,popSize-1)
-            two = random.randint(0,popSize-1)
-            three = random.randint(0,popSize-1)
-            four = random.randint(0, popSize-1)
+        for i in range(50):
+            for j in range(popSize):
+                random.seed(j**3 + 10 + time.time() )
+                one = random.randint(0,popSize-1)
+                two = random.randint(0,popSize-1)
+                three = random.randint(0,popSize-1)
+                four = random.randint(0, popSize-1)
 
-            One, Two, Three, Four = population[one], population[two], population[three], population[four]
-
-
-            y,z = np.array([]), np.array([])
-
-            random.seed(j**4 + 40 + time.time()*500)
-            r = random.random()
-            if (r <= 0.5):
-                y = np.append(y, np.add(One, np.multiply(Four, np.add(Two, Three)))%2)
-            else:
-                y = np.append(y, np.add(One, np.add(Two, Three))%2)
+                One, Two, Three, Four = population[one], population[two], population[three], population[four]
 
 
-            z = np.append(z,SMO(y))
+                y,z = np.array([]), np.array([])
 
-            if(fitness(z, majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i) < fitness(population[j], majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i)): 
-                population[j] = z.copy()
-                popfit[j] = fitness(z, majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i).copy()
+                random.seed(j**4 + 40 + time.time()*500)
+                r = random.random()
+                if (r <= 0.5):
+                    y = np.append(y, np.add(One, np.multiply(Four, np.add(Two, Three)))%2)
+                else:
+                    y = np.append(y, np.add(One, np.add(Two, Three))%2)
+
+
+                z = np.append(z,SMO(y))
+
+                if(fitness(z, majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i) < fitness(population[j], majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i)): 
+                    population[j] = z.copy()
+                    popfit[j] = fitness(z, majority_index, minority_index, trainX_i, testX_i, trainy_i, testy_i).copy()
+             
+            indx = np.argsort(popfit)
+            if popfit[indx[-1]] > gbestVal:
+                gbestVal = popfit[indx[-1]]
+                gbestVec = population[indx[-1]].copy()
+            print(i, gbestVal)
                 
         fitsrt = np.argsort(popfit)
         gbestVal = popfit[fitsrt[-1]]
-        gbestVec = population[fitsrt[-1]]
+        gbestVec = population[fitsrt[-1]].copy()
         rows1 = []
         for i in range(len(gbestVec)):
             if(gbestVec[i] == 1):
@@ -235,4 +239,3 @@ for s in range(15):
 
 
     RTEA()
-
